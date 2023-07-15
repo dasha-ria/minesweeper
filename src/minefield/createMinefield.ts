@@ -5,10 +5,7 @@ type CreateMinefield = {
 };
 
 function randomiseMineLocations({ width, height, mines }: CreateMinefield) {
-  const randomWidth = Math.floor(Math.random() * (width - 1));
-  const randomHeight = Math.floor(Math.random() * (height - 1));
-
-  let potentialLocations = [];
+  const potentialLocations = [];
 
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
@@ -16,10 +13,7 @@ function randomiseMineLocations({ width, height, mines }: CreateMinefield) {
     }
   }
 
-  potentialLocations = shuffle(potentialLocations);
-  const mineLocations = potentialLocations.slice(0, mines);
-
-  return mineLocations;
+  return shuffle(potentialLocations).slice(0, mines);
 }
 
 function shuffle<T>(array: Array<T>) {
