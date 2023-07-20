@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createMinefield } from "./minefield/createMinefield";
 
 function App() {
@@ -6,13 +6,44 @@ function App() {
     createMinefield({ width: 10, height: 10, mines: 5 })
   );
 
+  function revealCell({ y, x }: { y: number; x: number }) {
+    // const newMinefield = structuredClone(minefield);
+    // minefield[y][x] = { value: "Mine", action: "Revealed" };
+    // setMinefield(newMinefield);
+
+    const newMinefield = structuredClone(minefield);
+    newMinefield[y][x].action = "Revealed";
+    setMinefield(newMinefield);
+  }
+
+  function flagCell({ y, x }: { y: number; x: number }) {
+    const newMinefield = structuredClone(minefield);
+    const cell = newMinefield[y][x];
+
+    if (cell.action === "Flag") {
+      cell.action = null;
+    } else if (cell.action === null) {
+      cell.action = "Flag";
+    }
+    setMinefield(newMinefield);
+  }
+
   return (
     <div className="flex flex-col gap-1 items-center justify-center h-screen">
-      {minefield.map((row) => (
+      {minefield.map((row, y) => (
         <div className="flex gap-1">
-          {row.map((cell) => (
-            <div className="flex justify-center items-center  w-12 h-12 border border-black">
-              {cell.value === "Mine" ? "M" : cell.value}
+          {row.map((cell, x) => (
+            <div
+              onClick={() => revealCell({ y, x })}
+              onContextMenu={(e) => {
+                e.preventDefault();
+                flagCell({ y, x });
+              }}
+              className="flex justify-center items-center  w-12 h-12 border border-black"
+            >
+              {(cell.action === "Revealed" &&
+                (cell.value === "Mine" ? "M" : cell.value)) ||
+                (cell.action === "Flag" && "F")}
             </div>
           ))}
         </div>

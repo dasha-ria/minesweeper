@@ -6,7 +6,7 @@ type CreateMinefield = {
 
 type Cell = {
   value: string;
-  action: "Reveal" | "Flag" | null;
+  action: "Revealed" | "Flag" | null;
 };
 
 type Minefield = Array<Array<Cell>>;
@@ -69,10 +69,10 @@ function getSurroundingCells({
 }
 
 export function createMinefield({ width, height, mines }: CreateMinefield) {
-  const arr = new Array(height);
+  const minefield = new Array(height);
 
-  for (let i = 0; i < arr.length; i++) {
-    arr[i] = new Array(width).fill({ value: "0" });
+  for (let i = 0; i < minefield.length; i++) {
+    minefield[i] = new Array(width).fill({ value: "0", action: null });
   }
 
   //   const mineLocations = [
@@ -83,20 +83,21 @@ export function createMinefield({ width, height, mines }: CreateMinefield) {
   const mineLocations = randomiseMineLocations({ width, height, mines });
 
   mineLocations.forEach(({ x, y }) => {
-    arr[y][x] = { value: "Mine", action: null };
+    minefield[y][x] = { value: "Mine", action: null };
   });
 
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
-      if (arr[y][x].value !== "Mine") {
-        arr[y][x] = {
+      if (minefield[y][x].value !== "Mine") {
+        minefield[y][x] = {
           value: getSurroundingCells({ y, x, width, height })
-            .filter((coords) => arr[coords.y][coords.x].value === "Mine")
+            .filter((coords) => minefield[coords.y][coords.x].value === "Mine")
             .length.toString(),
+          action: null,
         };
       }
     }
   }
 
-  return arr as Minefield;
+  return minefield as Minefield;
 }
