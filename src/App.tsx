@@ -1,19 +1,39 @@
 import { useEffect, useState } from "react";
-import { createMinefield } from "./minefield/createMinefield";
+import {
+  createMinefield,
+  getSurroundingCells,
+} from "./minefield/createMinefield";
 
 function App() {
   const [minefield, setMinefield] = useState(
-    createMinefield({ width: 10, height: 10, mines: 5 })
+    createMinefield({ width: 10, height: 10, mines: 15 })
   );
 
   function revealCell({ y, x }: { y: number; x: number }) {
-    // const newMinefield = structuredClone(minefield);
-    // minefield[y][x] = { value: "Mine", action: "Revealed" };
-    // setMinefield(newMinefield);
+    setMinefield((prev) => {
+      const newMinefield = structuredClone(prev);
+      const cell = newMinefield[y][x];
+      cell.action = "Revealed";
 
-    const newMinefield = structuredClone(minefield);
-    newMinefield[y][x].action = "Revealed";
-    setMinefield(newMinefield);
+      if (cell.value === "0") {
+        const surroundingCoordinates = getSurroundingCells({
+          y,
+          x,
+          width: minefield[0].length,
+          height: minefield.length,
+        });
+
+        surroundingCoordinates.forEach((coords) => {
+          if (newMinefield[coords.y][coords.x].action !== "Revealed") {
+            revealCell({ y: coords.y, x: coords.x });
+          }
+        });
+      }
+
+      return newMinefield;
+    });
+
+    //    setMinefield(newMinefield);
   }
 
   function flagCell({ y, x }: { y: number; x: number }) {

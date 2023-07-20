@@ -43,7 +43,7 @@ function shuffle<T>(array: Array<T>) {
   return array;
 }
 
-function getSurroundingCells({
+export function getSurroundingCells({
   x,
   y,
   width,
