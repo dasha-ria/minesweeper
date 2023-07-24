@@ -6,8 +6,29 @@ import {
 
 function App() {
   const [minefield, setMinefield] = useState(
-    createMinefield({ width: 10, height: 10, mines: 15 })
+    createMinefield({ width: 2, height: 2, mines: 1 })
   );
+
+  const [gameState, setGameState] = useState<"Playing" | "Won" | "Lost">(
+    "Playing"
+  );
+
+  useEffect(() => {
+    let isWon = true;
+    let isLost = false;
+    minefield.flat().forEach((cell) => {
+      if (cell.action !== "Revealed" && cell.value !== "Mine") {
+        isWon = false;
+      } else if (cell.action === "Revealed" && cell.value === "Mine") {
+        isLost = true;
+      }
+    });
+    if (isLost) {
+      setGameState("Lost");
+    } else if (isWon) {
+      setGameState("Won");
+    }
+  }, [minefield]);
 
   function revealCell({ y, x }: { y: number; x: number }) {
     setMinefield((prev) => {
@@ -50,10 +71,12 @@ function App() {
 
   return (
     <div className="flex flex-col gap-1 items-center justify-center h-screen">
+      <p>Game state: {gameState}</p>
       {minefield.map((row, y) => (
         <div className="flex gap-1">
           {row.map((cell, x) => (
-            <div
+            <button
+              disabled={gameState !== "Playing"}
               onClick={() => revealCell({ y, x })}
               onContextMenu={(e) => {
                 e.preventDefault();
@@ -64,7 +87,7 @@ function App() {
               {(cell.action === "Revealed" &&
                 (cell.value === "Mine" ? "M" : cell.value)) ||
                 (cell.action === "Flag" && "F")}
-            </div>
+            </button>
           ))}
         </div>
       ))}
