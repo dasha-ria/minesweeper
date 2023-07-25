@@ -85,8 +85,8 @@ function App() {
               className="flex justify-center items-center  w-12 h-12 border border-black"
             >
               {(cell.action === "Revealed" &&
-                (cell.value === "Mine" ? "M" : cell.value)) ||
-                (cell.action === "Flag" && "F")}
+                (cell.value === "Mine" ? "💣" : cell.value)) ||
+                (cell.action === "Flag" && "🚩")}
             </button>
           ))}
         </div>
