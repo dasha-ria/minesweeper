@@ -5,24 +5,34 @@ import {
 } from "./minefield/createMinefield";
 
 function App() {
+  const mines = 1;
+
   const [minefield, setMinefield] = useState(
-    createMinefield({ width: 2, height: 2, mines: 1 })
+    createMinefield({ width: 2, height: 2, mines })
   );
 
   const [gameState, setGameState] = useState<"Playing" | "Won" | "Lost">(
     "Playing"
   );
+  const [flagCount, setFlagCount] = useState(0);
 
   useEffect(() => {
     let isWon = true;
     let isLost = false;
+    let flags = 0;
     minefield.flat().forEach((cell) => {
       if (cell.action !== "Revealed" && cell.value !== "Mine") {
         isWon = false;
       } else if (cell.action === "Revealed" && cell.value === "Mine") {
         isLost = true;
       }
+
+      if (cell.action === "Flag") {
+        flags++;
+      }
     });
+
+    setFlagCount(flags);
     if (isLost) {
       setGameState("Lost");
     } else if (isWon) {
@@ -72,10 +82,12 @@ function App() {
   return (
     <div className="flex flex-col gap-1 items-center justify-center h-screen">
       <p>Game state: {gameState}</p>
+      <p>🚩 {mines - flagCount}</p>
       {minefield.map((row, y) => (
-        <div className="flex gap-1">
+        <div className="flex gap-1" key={`row-${y}`}>
           {row.map((cell, x) => (
             <button
+              key={`cell-${y}-${x}`}
               disabled={gameState !== "Playing"}
               onClick={() => revealCell({ y, x })}
               onContextMenu={(e) => {
