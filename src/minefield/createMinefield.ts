@@ -69,16 +69,9 @@ export function getSurroundingCells({
 }
 
 export function createMinefield({ width, height, mines }: CreateMinefield) {
-  const minefield = new Array(height);
-
-  for (let i = 0; i < minefield.length; i++) {
-    minefield[i] = new Array(width).fill({ value: "0", action: null });
-  }
-
-  //   const mineLocations = [
-  //     { x: 0, y: 0 },
-  //     { x: 1, y: 0 },
-  //   ];
+  const minefield = new Array(height)
+    .fill(null)
+    .map(() => new Array<Cell>(width).fill({ value: "0", action: null }));
 
   const mineLocations = randomiseMineLocations({ width, height, mines });
 
