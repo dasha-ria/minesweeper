@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
 import { createMinefield, getSurroundingCells } from "./createMinefield";
 
-export function useMinefield() {
+type UseMinefield = {
+  width: number;
+  height: number;
+  mines: number;
+};
+
+export function useMinefield({ width, height, mines }: UseMinefield) {
   const [minefield, setMinefield] = useState(
-    createMinefield({ width: 2, height: 2, mines: 1 })
+    createMinefield({ width, height, mines })
   );
 
   const [gameState, setGameState] = useState<"Playing" | "Won" | "Lost">(
@@ -74,5 +80,7 @@ export function useMinefield() {
     setMinefield(newMinefield);
   }
 
-  return { minefield, gameState, flagCount, revealCell, flagCell };
+  const minesLeft = mines - flagCount;
+
+  return { minefield, gameState, flagCount, revealCell, flagCell, minesLeft };
 }
